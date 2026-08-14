@@ -1,0 +1,669 @@
+
+Commands.ipynb
+Commands.ipynb_
+20 Important Linux Commands with Explanations
+1. pwd — Print Working Directory
+Command
+pwd
+
+Explanation
+pwd stands for Print Working Directory.
+It shows the complete path of the directory you are currently working in.
+Useful when you want to know your current location in the Linux filesystem.
+Example Output
+/home/edukron
+
+2. ls — List Files and Directories
+Command
+ls
+
+Explanation
+Displays files and directories inside the current directory.
+It is one of the most commonly used Linux commands.
+Example
+ls /home
+
+3. ls -la — Detailed File Listing
+Command
+ls -la
+
+Explanation
+-l means long listing format.
+-a means show all files, including hidden files.
+Hidden files in Linux normally start with ..
+It displays permissions, owner, group, size, modification time, and filename.
+Example Output
+drwxr-xr-x 2 user user 4096 Aug 12 Documents -rw-r--r-- 1 user user 1200 Aug 12 notes.txt
+
+4. cd — Change Directory
+Command
+cd /var/log
+
+Explanation
+cd stands for Change Directory.
+Used to move from one directory to another.
+Useful Examples
+cd .. cd ~ cd /home cd /var/log
+
+cd .. → Move one directory backward.
+cd ~ → Go to the user's home directory.
+5. mkdir — Create Directory
+Command
+mkdir project
+
+Explanation
+mkdir stands for Make Directory.
+Creates a new directory.
+Example
+mkdir devops
+
+This creates a directory called devops.
+
+6. touch — Create Empty File
+Command
+touch test.txt
+
+Explanation
+Creates a new empty file.
+If the file already exists, it updates the file's timestamp.
+Example
+touch application.log
+
+7. cat — Display File Content
+Command
+cat test.txt
+
+Explanation
+cat stands for concatenate.
+Commonly used to display the complete contents of a text file.
+Example
+cat /etc/os-release
+
+This can be used to check information about the Linux operating system.
+
+8. cp — Copy Files
+Command
+cp source.txt destination.txt
+
+Explanation
+cp stands for Copy.
+Copies a file from one location to another.
+Example
+cp app.log /home/user/backup/
+
+Copy Directory
+cp -r project/ backup/
+
+-r means recursively copy the directory and its contents.
+
+9. mv — Move or Rename Files
+Command
+mv old.txt new.txt
+
+Explanation
+mv stands for Move.
+It can move files/directories.
+It can also rename files/directories.
+Rename Example
+mv oldname.txt newname.txt
+
+Move Example
+mv application.log /var/log/
+
+10. rm — Remove Files
+Command
+rm test.txt
+
+Explanation
+rm stands for Remove.
+Deletes files.
+Delete Directory
+rm -r project/
+
+Force Delete
+rm -rf project/
+
+-r → Recursive deletion.
+-f → Force deletion without confirmation.
+Warning
+Be extremely careful with rm -rf because deleted files may not be easily recoverable.
+
+11. df -h — Check Disk Space
+Command
+df -h
+
+Explanation
+df stands for Disk Free.
+Displays filesystem disk usage.
+-h means human-readable format.
+Example Output
+Filesystem Size Used Avail Use% /dev/sda1 50G 20G 30G 40%
+
+This tells us:
+
+Total disk = 50 GB
+Used = 20 GB
+Available = 30 GB
+Usage = 40%
+12. du -sh — Check Directory Size
+Command
+du -sh /var/log
+
+Explanation
+du stands for Disk Usage.
+Used to check how much disk space a directory is consuming.
+-s → Summary.
+-h → Human-readable.
+Example
+du -sh /home/user
+
+Example Output
+2.5G /home/user
+
+This means the directory consumes approximately 2.5 GB.
+
+13. free -h — Check Memory Usage
+Command
+free -h
+
+Explanation
+Displays RAM and swap-memory usage.
+-h displays values in MB/GB.
+Example Output
+          total    used    free
+Mem: 15Gi 2Gi 10Gi Swap: 2Gi 0Gi 2Gi
+
+Useful for checking whether a Linux server is running low on memory.
+
+14. top — Monitor System Processes
+Command
+top
+
+Explanation
+Displays running processes in real time.
+Shows CPU usage.
+Shows memory usage.
+Shows load average.
+Shows process IDs.
+Helps identify processes consuming excessive resources.
+Important columns include:
+
+PID → Process ID
+USER → Process owner
+%CPU → CPU utilization
+%MEM → Memory utilization
+COMMAND → Process/program name
+
+Press q to exit.
+
+15. ps aux — Display Running Processes
+Command
+ps aux
+
+Explanation
+Displays detailed information about currently running processes.
+Important Columns
+USER → Process owner
+PID → Process ID
+%CPU → CPU utilization
+%MEM → Memory utilization
+COMMAND → Command that started the process
+
+Find a Particular Process
+ps aux | grep nginx
+
+This searches for processes related to Nginx.
+
+16. kill — Stop a Process
+Command
+kill 1234
+
+Explanation
+Stops a running process using its Process ID (PID).
+By default, it sends a termination signal to the process.
+Example
+kill 4567
+
+Force Kill
+kill -9 4567
+
+-9 forcefully terminates the process.
+
+Use kill -9 only when normal termination is not working.
+
+17. whoami — Display Current User
+Command
+whoami
+
+Explanation
+Displays the username of the currently logged-in user.
+Example Output
+edukron
+
+Useful when working with multiple users or switching between normal and root accounts.
+
+18. ip addr — Check IP Address
+Command
+ip addr
+
+Explanation
+Displays network interfaces and IP addresses configured on the Linux machine.
+Commonly used for network troubleshooting.
+Short Version
+ip a
+
+You may see interfaces such as:
+
+eth0
+ens33
+lo
+
+lo represents the loopback interface.
+
+19. ping — Test Network Connectivity
+Command
+ping google.com
+
+Explanation
+Tests whether your server can communicate with another server.
+Helps troubleshoot network connectivity.
+It also displays response time.
+Example
+ping 8.8.8.8
+
+Press Ctrl + C to stop the ping command.
+
+If IP ping works but domain-name ping does not work, there may be a DNS issue.
+
+20. systemctl — Manage Linux Services
+Command
+systemctl status ssh
+
+Explanation
+systemctl is used to manage services on Linux systems using systemd.
+You can start, stop, restart, enable, disable, and check services.
+Check Service
+systemctl status nginx
+
+Start Service
+sudo systemctl start nginx
+
+Stop Service
+sudo systemctl stop nginx
+
+Restart Service
+sudo systemctl restart nginx
+
+Enable Service During Boot
+sudo systemctl enable nginx
+
+Quick Revision Table
+Command	Purpose
+pwd	Show current directory
+ls	List files and directories
+ls -la	Detailed listing including hidden files
+cd	Change directory
+mkdir	Create directory
+touch	Create empty file
+cat	Display file content
+cp	Copy files/directories
+mv	Move or rename files
+rm	Delete files/directories
+df -h	Check filesystem disk space
+du -sh	Check directory size
+free -h	Check RAM usage
+top	Monitor processes and resources
+ps aux	Display running processes
+kill	Terminate a process
+whoami	Show current user
+ip addr	Display network interfaces/IPs
+ping	Test network connectivity
+systemctl	Manage Linux services
+20 More Basic Linux Commands — 21 to 40
+21. clear — Clear the Terminal Screen
+Command
+clear
+
+Explanation
+Clears all previous output from the terminal screen.
+It does not delete commands or files.
+It simply gives you a clean terminal screen.
+Shortcut
+Ctrl + L
+
+22. date — Display Current Date and Time
+Command
+date
+
+Explanation
+Displays the current system date and time.
+Also shows the configured timezone.
+Example Output
+Wed Aug 12 15:55:10 IST 2026
+
+23. cal — Display Calendar
+Command
+cal
+
+Explanation
+Displays the calendar for the current month.
+Example
+cal
+
+Display a Specific Year
+cal 2026
+
+Display a Specific Month
+cal 8 2026
+
+24. hostname — Display System Name
+Command
+hostname
+
+Explanation
+Displays the hostname of the Linux machine.
+A hostname is the name assigned to a computer/server.
+Example Output
+devops-server
+
+More Detailed Information
+hostnamectl
+
+25. uname — Display System Information
+Command
+uname
+
+Explanation
+Displays basic information about the operating system.
+Detailed Command
+uname -a
+
+Example
+uname -a
+
+This can display:
+
+Kernel name
+Hostname
+Kernel version
+Architecture
+Operating system information
+26. history — Display Previous Commands
+Command
+history
+
+Explanation
+Displays commands previously executed in the terminal.
+Useful when you want to reuse an old command.
+Example Output
+1 pwd 2 ls 3 cd /var/log 4 df -h 5 free -h
+
+Run Command Number 4 Again
+!4
+
+27. echo — Print Text or Variables
+Command
+echo "Hello Linux"
+
+Explanation
+Displays text on the terminal.
+Also commonly used to display environment variables.
+Example
+echo "Welcome to DevOps"
+
+Display Variable
+echo $HOME
+
+28. man — Open Command Manual
+Command
+man ls
+
+Explanation
+man stands for Manual.
+Displays detailed documentation about a Linux command.
+Example
+man cp
+
+It explains:
+
+Command syntax
+Available options
+Description
+Usage
+Press q to exit the manual.
+
+29. head — Display Beginning of a File
+Command
+head file.txt
+
+Explanation
+Displays the first 10 lines of a file by default.
+Example
+head /etc/passwd
+
+Display First 5 Lines
+head -n 5 file.txt
+
+Useful when working with large files.
+
+30. tail — Display End of a File
+Command
+tail file.txt
+
+Explanation
+Displays the last 10 lines of a file by default.
+Very useful for checking log files.
+Example
+tail /var/log/syslog
+
+Display Last 20 Lines
+tail -n 20 file.txt
+
+Monitor a Log File Continuously
+tail -f application.log
+
+tail -f is commonly used by DevOps engineers to monitor application logs in real time.
+
+31. less — Read Large Files
+Command
+less file.txt
+
+Explanation
+Opens a file page by page.
+Useful when the file is too large for cat.
+Example
+less /var/log/syslog
+
+Navigation
+Space → Next page
+b → Previous page
+q → Quit
+/word → Search for a word
+
+32. grep — Search Text
+Command
+grep "error" application.log
+
+Explanation
+Searches for specific text inside a file.
+Example
+grep "failed" server.log
+
+Ignore Uppercase/Lowercase
+grep -i "error" application.log
+
+Search Processes
+ps aux | grep nginx
+
+grep is one of the most commonly used Linux commands for troubleshooting.
+
+33. find — Search for Files
+Command
+find /home -name "test.txt"
+
+Explanation
+Searches for files and directories.
+You can search using filename, type, size, and other conditions.
+Example
+find / -name "application.log"
+
+Find All .txt Files
+find /home -name "*.txt"
+
+34. which — Find Command Location
+Command
+which python
+
+Explanation
+Shows where a command or executable is installed.
+Example
+which python3
+
+Example Output
+/usr/bin/python3
+
+Another Example
+which docker
+
+35. wc — Count Lines, Words and Characters
+Command
+wc file.txt
+
+Explanation
+wc stands for Word Count.
+Displays line count, word count, and character/byte count.
+Count Lines
+wc -l file.txt
+
+Count Words
+wc -w file.txt
+
+Example
+wc -l application.log
+
+Useful for checking how many lines are present in a log or data file.
+
+36. sort — Sort File Content
+Command
+sort names.txt
+
+Explanation
+Sorts lines of text alphabetically.
+Example File
+Ravi Anil Bharath Kiran
+
+Command
+sort names.txt
+
+Output
+Anil Bharath Kiran Ravi
+
+Reverse Sorting
+sort -r names.txt
+
+37. chmod — Change File Permissions
+Command
+chmod 755 script.sh
+
+Explanation
+chmod stands for Change Mode.
+Used to change file and directory permissions.
+Linux permissions are:
+
+r → Read
+w → Write
+x → Execute
+
+Example
+chmod +x script.sh
+
+This gives execute permission to the script.
+
+Another Example
+chmod 644 file.txt
+
+Common permission values:
+
+755 → Owner can read/write/execute; others can read/execute
+644 → Owner can read/write; others can only read
+
+38. chown — Change File Owner
+Command
+sudo chown user file.txt
+
+Explanation
+chown stands for Change Owner.
+Changes ownership of a file or directory.
+Example
+sudo chown edukron application.log
+
+Change Owner and Group
+sudo chown edukron:developers application.log
+
+Here:
+
+edukron → User/owner
+developers → Group
+
+39. sudo — Run Command with Administrative Privileges
+Command
+sudo apt update
+
+Explanation
+sudo stands for Superuser Do.
+Allows an authorized user to execute commands with elevated privileges.
+Example
+sudo systemctl restart nginx
+
+Another Example
+sudo mkdir /opt/project
+
+You normally need sudo when changing system configurations, installing software, or managing services.
+
+40. apt — Manage Software Packages
+Command
+sudo apt update
+
+Explanation
+apt is a package management command commonly used in Ubuntu and Debian.
+Used to install, update, upgrade, and remove software.
+Update Package Information
+sudo apt update
+
+Upgrade Installed Packages
+sudo apt upgrade
+
+Install Nginx
+sudo apt install nginx
+
+Remove Nginx
+sudo apt remove nginx
+
+Search for a Package
+apt search nginx
+
+Quick Revision — Commands 21 to 40
+No.	Command	Purpose
+21	clear	Clear terminal screen
+22	date	Display date and time
+23	cal	Display calendar
+24	hostname	Display server hostname
+25	uname -a	Display system/kernel information
+26	history	Show previous commands
+27	echo	Print text or variables
+28	man	Open command manual
+29	head	Show beginning of file
+30	tail	Show end of file
+31	less	Read large files
+32	grep	Search text
+33	find	Search files/directories
+34	which	Find executable location
+35	wc	Count lines/words
+36	sort	Sort text
+37	chmod	Change permissions
+38	chown	Change ownership
+39	sudo	Run command with elevated privileges
+40	apt	Install/manage software packages
+Colab paid products
+-
+Cancel contracts here
