@@ -1,0 +1,1561 @@
+
+Notes  August 12.ipynb
+Notes  August 12.ipynb_
+
+[ ]
+
+Linux Administration, Networking, Process Management & Migration Notes
+1. Linux File and Directory Commands
+Linux file commands are used to navigate between directories, create directories, create files, check files, and manage the filesystem.
+
+1.1 pwd — Present Working Directory
+Command
+pwd
+Purpose
+pwd means Present Working Directory.
+
+It tells us our current location inside the Linux filesystem.
+
+Example
+$ pwd
+/home/edukron
+This means we are currently inside:
+
+/home/edukron
+Real-Time Use
+If you are working on a production Linux server and want to know your current directory before running a command:
+
+pwd
+1.2 ls — List Files and Directories
+Command
+ls
+Shows files and directories in the current location.
+
+Example:
+
+$ ls
+application
+backup
+logs
+scripts
+Detailed listing:
+
+ls -l
+Show hidden files:
+
+ls -a
+Show detailed information including hidden files:
+
+ls -la
+Important
+ls -la
+is one of the most commonly used commands.
+
+It displays:
+
+File permissions
+Owner
+Group
+File size
+Modification time
+File/directory name
+Hidden files
+1.3 cd — Change Directory
+Used to move from one directory to another.
+
+Example
+cd /var/log
+Now you are inside:
+
+/var/log
+Go back one directory:
+
+cd ..
+Example:
+
+/home/edukron/project
+          |
+          | cd ..
+          v
+/home/edukron
+Go to home directory:
+
+cd ~
+1.4 mkdir — Make Directory
+Creates a new directory.
+
+Example
+mkdir backup
+Creates:
+
+backup/
+Create multiple nested directories:
+
+mkdir -p project/dev/config
+1.5 touch — Create Empty File
+Example
+touch application.log
+Creates:
+
+application.log
+You can also create multiple files:
+
+touch file1.txt file2.txt file3.txt
+If the file already exists, touch normally updates its timestamp.
+
+2. Disk Monitoring
+df -h
+Command
+df -h
+df shows filesystem disk-space usage.
+
+-h means human-readable format.
+
+Example:
+
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root        30G   10G   20G  34% /
+/dev/sda16      881M   64M  756M   8% /boot
+Important Columns
+Column	Meaning
+Filesystem	Disk/filesystem
+Size	Total size
+Used	Used space
+Avail	Available space
+Use%	Percentage used
+Mounted on	Location where filesystem is mounted
+Real-Time Scenario
+Application team reports:
+
+Application is unable to write log files.
+First check:
+
+df -h
+If you see:
+
+/dev/root   30G   29G   1G   97% /
+the disk is nearly full.
+
+Then investigate large directories.
+
+Example:
+
+du -sh /var/*
+3. Memory Monitoring
+free -h
+Command
+free -h
+Shows RAM and swap usage.
+
+Example:
+
+              total    used    free   shared   buff/cache   available
+Mem:           15Gi     4Gi     8Gi     20Mi       3Gi        10Gi
+Swap:           2Gi     0Gi     2Gi
+Important Fields
+total
+    Total RAM
+
+used
+    Memory currently being used
+
+free
+    Completely unused memory
+
+buff/cache
+    Memory Linux is using for buffers and filesystem cache
+
+available
+    Approximate memory available for applications
+
+swap
+    Disk space that can be used as virtual memory
+4. Networking Related Commands
+Networking commands are used to:
+
+Check connectivity
+Find network problems
+Inspect IP addresses
+Troubleshoot DNS
+Identify listening ports
+Check active connections
+Understand traffic flow
+Troubleshoot application connectivity
+5. ip addr — Network Interface Information
+Command
+ip addr
+Example:
+
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500
+    link/ether e4:fb:1e:fe:4b:54
+    inet 10.0.0.4/24
+    inet6 fe80::e6fb:1eff:fefe:4b54/64
+Network Interface
+eth0
+is a network interface.
+
+Depending on the Linux distribution/environment, you may see names such as:
+
+eth0
+eth1
+ens33
+enp0s3
+MAC Address
+link/ether e4:fb:1e:fe:4b:54
+link/ether shows the MAC address associated with the interface.
+
+Example:
+
+e4:fb:1e:fe:4b:54
+IPv4 Address
+inet 10.0.0.4/24
+inet represents an IPv4 address.
+
+Here:
+
+10.0.0.4
+is the IPv4 address.
+
+IPv6 Address
+inet6 fe80::e6fb:1eff:fefe:4b54/64
+inet6 represents an IPv6 address.
+
+MTU
+mtu 1500
+MTU means:
+
+Maximum Transmission Unit
+It represents the maximum IP packet size normally supported by that network interface without IP fragmentation.
+
+6. IPv4
+IPv4 uses a:
+
+32-bit address
+Example:
+
+192.168.1.1
+IPv4 theoretical address space:
+
+2^32
+Approximately:
+
+4.29 billion addresses
+IPv4 uses dots:
+
+192.168.1.1
+7. IPv6
+IPv6 uses:
+
+128-bit addresses
+Example:
+
+2001:db8:1:1::1
+IPv6 theoretical address space:
+
+2^128
+This provides an extremely large address space.
+
+8. hostname -I
+Command
+hostname -I
+Displays the IP addresses assigned to the machine.
+
+Example:
+
+10.0.0.4
+On a simple Azure VM with one primary private network interface, this will commonly include the VM's private IP.
+
+9. ip route — Routing Table
+Command
+ip route
+Used to check the Linux routing table.
+
+The routing table determines:
+
+Where should network traffic go?
+Example:
+
+default via 10.0.0.1 dev eth0 proto dhcp src 10.0.0.4 metric 100
+
+10.0.0.0/24 dev eth0 proto kernel scope link src 10.0.0.4 metric 100
+
+10.0.0.1 dev eth0 proto dhcp scope link src 10.0.0.4 metric 100
+
+168.63.129.16 via 10.0.0.1 dev eth0 proto dhcp src 10.0.0.4 metric 100
+
+169.254.169.254 via 10.0.0.1 dev eth0 proto dhcp src 10.0.0.4 metric 100
+Understanding the Default Route
+Consider:
+
+default via 10.0.0.1 dev eth0
+default
+If Linux doesn't have a more specific matching route, use this route.
+
+via 10.0.0.1
+Send the traffic through gateway:
+
+10.0.0.1
+dev eth0
+Use network interface:
+
+eth0
+Therefore:
+
+Application
+    |
+    v
+Linux VM
+    |
+    v
+eth0
+    |
+    v
+10.0.0.1
+    |
+    v
+Destination Network
+10. ping — Connectivity Testing
+Command
+ping google.com
+Used to test network connectivity and round-trip latency.
+
+Send only four packets:
+
+ping -c 4 google.com
+Example:
+
+4 packets transmitted
+4 received
+0% packet loss
+This means all four probes received replies.
+
+time
+Example:
+
+time=12.4 ms
+This represents approximately the round-trip time:
+
+Your Machine
+     |
+     | packet
+     v
+Google Server
+     |
+     | response
+     v
+Your Machine
+This is called:
+
+Round Trip Time (RTT)
+or commonly:
+
+Latency
+Packet Loss
+Example:
+
+4 packets transmitted
+4 received
+0% packet loss
+Good connectivity.
+
+Example:
+
+4 packets transmitted
+3 received
+25% packet loss
+One out of four probes did not receive a reply.
+
+Packet loss can be caused by many things, including:
+
+Network congestion
+Firewall/rate limiting
+Routing problems
+Wireless problems
+Network interface issues
+Destination filtering
+11. ss -tuln — Socket Statistics
+Command
+ss -tuln
+Used to display listening TCP and UDP sockets.
+
+Breaking it down:
+
+ss
+    Socket Statistics
+
+-t
+    TCP sockets
+
+-u
+    UDP sockets
+
+-l
+    Listening sockets
+
+-n
+    Show numeric addresses/port numbers
+Example:
+
+LISTEN  0  128  0.0.0.0:22
+LISTEN  0  128  0.0.0.0:80
+LISTEN  0  128  0.0.0.0:443
+This indicates services are listening on ports such as:
+
+22
+80
+443
+12. TCP — Transmission Control Protocol
+TCP means:
+
+Transmission Control Protocol
+TCP provides reliable, ordered byte-stream delivery between applications.
+
+Simplified example:
+
+Sender
+
+Packet/Data 1
+Packet/Data 2
+Packet/Data 3   ---> Lost
+Packet/Data 4
+Packet/Data 5
+TCP detects that required data has not been successfully received and can retransmit it.
+
+Packet/Data 3 ---> Retransmitted
+The receiving application can ultimately receive the complete ordered data stream.
+
+TCP is used when reliability and ordered delivery are important.
+
+Examples include:
+
+HTTP/1.1 and HTTP/2
+HTTPS over TCP
+SSH
+Database connections
+Note:
+
+HTTP/3 uses QUIC over UDP rather than TCP.
+13. UDP — User Datagram Protocol
+UDP means:
+
+User Datagram Protocol
+UDP is connectionless at the transport layer.
+
+Simplified example:
+
+Datagram 1
+Datagram 2
+Datagram 3 ---> Lost
+Datagram 4
+Datagram 5
+UDP itself does not provide TCP-style retransmission and ordered delivery.
+
+If an application requires those features while using UDP, they must be provided at a higher layer/protocol.
+
+UDP is useful where:
+
+Low latency is important
+Some packet loss may be acceptable
+The application/protocol handles reliability itself
+Examples include:
+
+DNS
+Streaming use cases
+VoIP
+Gaming
+QUIC / HTTP/3
+14. TCP vs UDP
+TCP	UDP
+Connection-oriented	Connectionless transport
+Reliable delivery mechanisms	No built-in reliable delivery
+Ordered byte stream	Datagram-based
+Retransmission supported	No built-in retransmission
+More protocol overhead	Lower protocol overhead
+SSH uses TCP	DNS commonly uses UDP
+15. HTTP
+HTTP means:
+
+Hypertext Transfer Protocol
+HTTP is an application-layer protocol used for communication between web clients and servers.
+
+Example:
+
+Browser
+   |
+   | HTTP Request
+   v
+Web Server
+   |
+   | HTTP Response
+   v
+Browser
+Default port:
+
+80
+16. HTTPS
+HTTPS means:
+
+Hypertext Transfer Protocol Secure
+HTTPS uses TLS to provide encrypted and authenticated communication.
+
+Default port:
+
+443
+Examples:
+
+Secure websites
+Login pages
+Banking applications
+E-commerce applications
+REST APIs
+17. Network Layers
+TCP and UDP operate at the:
+
+Transport Layer
+Protocols such as HTTP, HTTPS, DNS and SSH operate at the:
+
+Application Layer
+Simplified view:
+
+Application Layer
+    |
+    | HTTP / HTTPS / SSH / DNS
+    v
+Transport Layer
+    |
+    | TCP / UDP
+    v
+Internet Layer
+    |
+    | IP
+    v
+Network Interface / Link Layer
+    |
+    v
+Physical / Virtual Network
+18. Important Port Numbers
+Service	Default Port
+SSH	22
+DNS	53
+HTTP	80
+HTTPS	443
+MySQL	3306
+PostgreSQL	5432
+Common development/application port	8080
+Common development/application port	8000
+Important:
+
+8080 and 8000 are common application ports,
+but they are not universally assigned to one application.
+19. traceroute
+Command
+traceroute google.com
+Traceroute helps determine the network path toward a destination.
+
+Example:
+
+traceroute to google.com (142.250.183.14), 30 hops max, 60 byte packets
+
+ 1  10.0.0.1         0.542 ms   0.487 ms   0.461 ms
+ 2  192.168.1.1      1.245 ms   1.180 ms   1.201 ms
+ 3  103.25.56.1      5.432 ms   5.521 ms   5.398 ms
+ 4  172.16.20.1      8.211 ms   8.145 ms   8.300 ms
+ 5  * * *
+ 6  72.14.215.85    15.234 ms  15.401 ms  15.198 ms
+ 7  142.250.183.14  18.521 ms  18.432 ms  18.601 ms
+Possible conceptual path:
+
+Ubuntu Machine
+      |
+      v
+Local Gateway
+      |
+      v
+ISP Router
+      |
+      v
+ISP Network
+      |
+      v
+Internet Backbone
+      |
+      v
+Google Network
+      |
+      v
+Google Server
+20. What is a Hop?
+A hop represents one routing step toward the destination.
+
+Example:
+
+Your VM
+   |
+   | Hop 1
+   v
+Router 1
+   |
+   | Hop 2
+   v
+Router 2
+   |
+   | Hop 3
+   v
+Router 3
+Traceroute commonly has a default maximum such as:
+
+30 hops
+This means it will stop after the configured maximum if the destination has not been reached.
+
+21. Why Three Times in Traceroute?
+Example:
+
+10.0.0.1    0.542 ms   0.487 ms   0.461 ms
+Traceroute commonly sends multiple probes per hop.
+
+These are the round-trip times for those probes.
+
+Example:
+
+Probe 1 = 0.542 ms
+Probe 2 = 0.487 ms
+Probe 3 = 0.461 ms
+22. What Does * * * Mean?
+Example:
+
+5  * * *
+It means traceroute did not receive responses to its probes within the timeout.
+
+It does NOT automatically mean:
+
+Router is down.
+Possible reasons include:
+
+Firewall filtering
+Router does not respond to traceroute probes
+ICMP filtering/rate limiting
+Network congestion
+Packet loss
+If later hops respond:
+
+4   8 ms
+5   * * *
+6   15 ms
+7   18 ms
+traffic is clearly getting beyond hop 5.
+
+23. Why Networking Commands Are Important
+Networking commands help us:
+
+Check connectivity
+Find network problems
+Inspect IP addresses
+Check routing
+Troubleshoot DNS
+Identify listening ports
+Check active network connections
+Understand traffic flow
+Troubleshoot applications
+Typical troubleshooting flow:
+
+Application not reachable
+          |
+          v
+Check IP address
+          |
+          v
+ip addr
+          |
+          v
+Check routing
+          |
+          v
+ip route
+          |
+          v
+Check connectivity
+          |
+          v
+ping
+          |
+          v
+Check network path
+          |
+          v
+traceroute
+          |
+          v
+Check DNS
+          |
+          v
+nslookup / dig
+          |
+          v
+Check listening ports
+          |
+          v
+ss -tuln
+          |
+          v
+Test application
+          |
+          v
+curl
+24. Networking Practice Questions
+Question 1
+You want to quickly display the IP addresses assigned to your machine.
+
+Answer:
+
+hostname -I
+Question 2
+You want to send only four ping packets to Google.
+
+Answer:
+
+ping -c 4 google.com
+Question 3
+You want to see current TCP sockets/connections.
+
+Answer:
+
+ss -t
+Question 4
+You want to see UDP sockets.
+
+Answer:
+
+ss -u
+Question 5
+You want to check the routing table and default gateway.
+
+Answer:
+
+ip route
+Question 6
+You want to check listening TCP and UDP ports.
+
+Answer:
+
+ss -tuln
+Question 7
+You want to find the path traffic takes toward Google.
+
+Answer:
+
+traceroute google.com
+25. Process-Related Commands
+Linux processes are running instances of programs.
+
+Examples:
+
+nginx
+sshd
+python
+java
+mysql
+cron
+26. ps
+Command
+ps
+ps means:
+
+Process Status
+It displays process information.
+
+Basic output:
+
+PID     TTY       TIME       CMD
+1200    pts/0     00:00:00   bash
+1400    pts/0     00:00:00   ps
+PID
+PID means:
+
+Process ID
+Every process receives a process ID.
+
+Example:
+
+PID 1200
+TTY
+TTY represents the terminal associated with the process.
+
+Example:
+
+pts/0
+TIME
+CPU time consumed by the process.
+
+CMD
+Command/program associated with the process.
+
+27. ps aux
+Command
+ps aux
+Breaking it down:
+
+ps
+    Process Status
+
+a
+    Processes for all users with terminals
+
+u
+    User-oriented detailed format
+
+x
+    Include processes without a controlling terminal
+Example:
+
+USER      PID  %CPU %MEM   COMMAND
+root        1   0.0  0.1   systemd
+root      500   0.1  0.2   sshd
+edukron   850   2.5  1.2   python app.py
+Useful for checking:
+
+Running processes
+Process owner
+PID
+CPU usage
+Memory usage
+Command
+28. top — Live Process Monitoring
+Command
+top
+top provides real-time system and process monitoring.
+
+It displays:
+
+CPU usage
+Memory usage
+Swap
+System load
+Running processes
+Sleeping processes
+Zombie processes
+Process CPU consumption
+Process memory consumption
+Important keys:
+
+P
+    Sort by CPU
+
+M
+    Sort by memory
+
+q
+    Quit
+29. pstree — Process Tree
+Command
+pstree
+Displays parent-child relationships between processes.
+
+Example:
+
+systemd
+├─sshd
+│   └─sshd
+│       └─bash
+│           └─python3
+├─nginx
+│   ├─nginx
+│   └─nginx
+└─cron
+This helps answer:
+
+Which process started which process?
+Show PIDs:
+
+pstree -p
+Example:
+
+systemd(1)
+   |
+   +--sshd(500)
+         |
+         +--bash(800)
+                |
+                +--python3(900)
+30. Parent and Child Processes
+Every process normally has a parent process.
+
+Example:
+
+systemd
+   |
+   v
+sshd
+   |
+   v
+bash
+   |
+   v
+python
+Important terms:
+
+PID
+    Process ID
+
+PPID
+    Parent Process ID
+31. kill
+Stop a process using its PID.
+
+Example:
+
+kill 900
+This normally sends:
+
+SIGTERM
+SIGTERM asks the application to terminate gracefully.
+
+Force Kill
+kill -9 900
+This sends:
+
+SIGKILL
+The kernel immediately terminates the process.
+
+Use kill -9 only when necessary because the application cannot perform normal cleanup.
+
+You do NOT always need to be root.
+
+You can generally signal:
+
+Your own processes
+Root or appropriate privileges are required to signal processes owned by other users.
+
+32. Linux Server Log Analysis
+Linux administrators and DevOps engineers frequently investigate:
+
+CPU utilization
+Memory utilization
+Disk utilization
+Running processes
+System load
+Network connections
+Application logs
+Authentication logs
+Service failures
+Useful commands:
+
+top
+
+ps aux
+
+free -h
+
+df -h
+
+ss -tuln
+
+journalctl
+
+systemctl status <service>
+
+tail -f /var/log/<log-file>
+33. Example Production Troubleshooting
+Problem:
+
+Production server is slow.
+Step 1:
+
+top
+Check:
+
+CPU
+Memory
+Load average
+Processes
+Step 2:
+
+free -h
+Check memory.
+
+Step 3:
+
+df -h
+Check disk.
+
+Step 4:
+
+ps aux --sort=-%cpu
+Find CPU-consuming processes.
+
+Step 5:
+
+ps aux --sort=-%mem
+Find memory-consuming processes.
+
+Step 6:
+
+ss -tuln
+Check listening ports.
+
+Step 7:
+
+journalctl -xe
+Check recent system/service-related logs.
+
+34. Disk Cleanup Automation
+Linux servers continuously generate:
+
+Logs
+Temporary files
+Cache
+Application output
+Backup files
+Over time:
+
+Disk Usage
+    |
+    v
+60%
+    |
+    v
+75%
+    |
+    v
+90%
+    |
+    v
+Application problems
+We can automate cleanup.
+
+Example concept:
+
+Find old logs
+     |
+     v
+Archive required logs
+     |
+     v
+Delete expired logs
+     |
+     v
+Free disk space
+Automation tools:
+
+Bash scripts
+cron
+systemd timers
+logrotate
+Ansible
+35. Automatic Backups
+Important data can be automatically backed up.
+
+Examples:
+
+Application files
+Configuration files
+Database dumps
+Scripts
+Important data
+Deployment configuration
+Example:
+
+Production Server
+      |
+      v
+Backup Script
+      |
+      v
+Compress Files
+      |
+      v
+Backup Storage
+Backups can run automatically using:
+
+cron
+Example:
+
+Every day at 2 AM
+      |
+      v
+Backup application
+      |
+      v
+Backup database
+      |
+      v
+Upload backup
+      |
+      v
+Verify backup
+36. Software Installation Automation
+Suppose an organization has:
+
+100 Linux servers
+Installing software manually on every server is inefficient and error-prone.
+
+Instead:
+
+Automation
+    |
+    +--> Server 1
+    +--> Server 2
+    +--> Server 3
+    +--> Server 4
+    |
+    +--> Server 100
+Tools:
+
+Bash
+Ansible
+Terraform
+Cloud-init
+Configuration management tools
+Main benefit:
+
+Standardization
+All servers can receive consistent:
+
+Software versions
+Configuration
+Packages
+Users
+Security settings
+37. User Management Automation
+Large organizations may have many Linux users.
+
+Automation can handle:
+
+Create users
+Delete users
+Create groups
+Add users to groups
+Configure permissions
+Manage SSH keys
+Remove access
+Disable accounts
+Example:
+
+Employee Joins
+      |
+      v
+Automation
+      |
+      +--> Create Linux account
+      +--> Configure group
+      +--> Configure permissions
+      +--> Install SSH public key
+Employee leaves:
+
+Employee Leaves
+      |
+      v
+Automation
+      |
+      +--> Disable account
+      +--> Remove SSH access
+      +--> Remove permissions
+38. Environment Provisioning
+Organizations commonly maintain multiple environments:
+
+Development
+     |
+     v
+QA
+     |
+     v
+UAT
+     |
+     v
+Production
+Short form:
+
+DEV → QA → UAT → PROD
+Instead of manually creating each environment, infrastructure can be automated.
+
+Tools include:
+
+Terraform
+Ansible
+ARM/Bicep
+Bash
+CI/CD pipelines
+Benefits:
+
+Standardization
+Faster deployments
+Reduced manual errors
+Repeatability
+Version-controlled infrastructure
+39. Migration Projects
+Migration is the process of moving:
+
+Applications
+Servers
+Databases
+Files
+Infrastructure
+Services
+from one environment/platform to another.
+
+Example:
+
+On-Premises
+      |
+      v
+Azure Cloud
+40. Common Migration Types
+Server Migration
+Physical Server
+      |
+      v
+Virtual Machine
+      |
+      v
+Azure VM
+Application Migration
+On-Prem Application
+      |
+      v
+Azure VM / App Service / AKS
+Database Migration
+On-Prem Database
+      |
+      v
+Azure SQL / SQL VM / Managed Database
+File Migration
+Local File Server
+      |
+      v
+Azure Files / Blob / ADLS
+41. Migration Project Phases
+A migration project usually follows:
+
+1. Discovery
+      |
+      v
+2. Assessment
+      |
+      v
+3. Planning
+      |
+      v
+4. Environment Preparation
+      |
+      v
+5. Migration
+      |
+      v
+6. Testing
+      |
+      v
+7. Cutover
+      |
+      v
+8. Validation
+      |
+      v
+9. Monitoring
+      |
+      v
+10. Decommission old environment
+42. Discovery Phase
+First understand the existing environment.
+
+Collect:
+
+Server names
+IP addresses
+Operating systems
+CPU
+Memory
+Disk
+Applications
+Databases
+Ports
+Dependencies
+Network connections
+Useful Linux commands:
+
+hostname
+
+hostname -I
+
+ip addr
+
+ip route
+
+df -h
+
+free -h
+
+ps aux
+
+ss -tuln
+
+systemctl --type=service
+43. Migration Network Assessment
+Before migration, understand:
+
+Source IP
+Destination IP
+Network routes
+Firewall rules
+Open ports
+DNS
+Application dependencies
+Commands:
+
+ip addr
+
+ip route
+
+ping
+
+traceroute
+
+ss -tuln
+
+nslookup
+
+dig
+
+curl
+44. Migration Example
+Suppose we have:
+
+On-Prem Linux Server
+
+Application:
+    Java
+
+Database:
+    MySQL
+
+Web Server:
+    Nginx
+
+Application Port:
+    8080
+We want to migrate it to:
+
+Azure VM
+Before migration:
+
+hostname -I
+Check server IP.
+
+Then:
+
+df -h
+Check storage requirements.
+
+Then:
+
+free -h
+Check memory requirements.
+
+Then:
+
+ps aux
+Check running processes.
+
+Then:
+
+ss -tuln
+Check listening ports.
+
+You might discover:
+
+22
+80
+443
+3306
+8080
+These details help determine:
+
+Azure VM sizing
+NSG rules
+Firewall rules
+Application configuration
+Database connectivity
+Migration dependencies
+45. After Migration Validation
+After migrating to Azure, validate the new environment.
+
+Check IP:
+
+ip addr
+Check routes:
+
+ip route
+Check Internet/network connectivity:
+
+ping <destination>
+Check DNS:
+
+nslookup application.example.com
+Check ports:
+
+ss -tuln
+Check application:
+
+curl http://localhost:8080
+Check processes:
+
+ps aux
+Check resources:
+
+top
+Check memory:
+
+free -h
+Check disk:
+
+df -h
+Check services:
+
+systemctl status nginx
+46. Migration Troubleshooting Example
+Problem:
+
+Application worked on-premises but does not work after Azure migration.
+Troubleshooting flow:
+
+Application unavailable
+        |
+        v
+Is application process running?
+        |
+        v
+    ps aux
+        |
+        v
+Is application port listening?
+        |
+        v
+    ss -tuln
+        |
+        v
+Does VM have correct IP?
+        |
+        v
+    ip addr
+        |
+        v
+Is routing correct?
+        |
+        v
+    ip route
+        |
+        v
+Can destination be reached?
+        |
+        v
+    ping
+        |
+        v
+Where is traffic stopping?
+        |
+        v
+    traceroute
+        |
+        v
+Is DNS resolving?
+        |
+        v
+    nslookup / dig
+        |
+        v
+Does application respond locally?
+        |
+        v
+    curl localhost:8080
+        |
+        v
+Check Azure NSG / Firewall / Load Balancer
+        |
+        v
+Check application logs
+47. Important Command Summary
+Requirement	Command
+Current directory	pwd
+List files	ls -la
+Change directory	cd
+Create directory	mkdir
+Create file	touch
+Disk usage	df -h
+Memory usage	free -h
+Network interfaces/IP	ip addr
+Quick host IPs	hostname -I
+Routing table	ip route
+Connectivity	ping
+Network path	traceroute
+TCP sockets	ss -t
+UDP sockets	ss -u
+Listening ports	ss -tuln
+DNS lookup	nslookup
+Detailed DNS	dig
+HTTP/API test	curl
+Current processes	ps
+Detailed processes	ps aux
+Live monitoring	top
+Process hierarchy	pstree
+Stop process	kill PID
+Force kill	kill -9 PID
+Service status	systemctl status
+System logs	journalctl
+48. Easy Troubleshooting Memory
+Remember:
+
+FILES
+  |
+  +--> pwd
+  +--> ls
+  +--> cd
+  +--> mkdir
+  +--> touch
+
+SYSTEM
+  |
+  +--> df -h
+  +--> free -h
+  +--> top
+
+NETWORK
+  |
+  +--> ip addr
+  +--> hostname -I
+  +--> ip route
+  +--> ping
+  +--> traceroute
+  +--> ss
+  +--> nslookup
+  +--> dig
+  +--> curl
+
+PROCESS
+  |
+  +--> ps
+  +--> ps aux
+  +--> top
+  +--> pstree
+  +--> kill
+
+AUTOMATION
+  |
+  +--> Disk cleanup
+  +--> Backups
+  +--> Software installation
+  +--> User management
+  +--> Environment provisioning
+
+MIGRATION
+  |
+  +--> Discovery
+  +--> Assessment
+  +--> Planning
+  +--> Migration
+  +--> Testing
+  +--> Cutover
+  +--> Validation
+  +--> Monitoring
+Double-click (or enter) to edit
+
+Colab paid products
+-
+Cancel contracts here
